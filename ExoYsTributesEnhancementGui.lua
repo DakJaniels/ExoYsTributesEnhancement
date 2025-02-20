@@ -57,7 +57,7 @@ function ETE.InitializeTurnTimeGui()
   end
   SetSize( store.size )
 
-  local buttons = ETE.WM:CreateControl( turnTimeGui.name.."Buttons", ctrl, CT_CONTROl)
+  local buttons = ETE.WM:CreateControl( turnTimeGui.name.."Buttons", ctrl, CT_CONTROL)
   buttons:ClearAnchors()
   buttons:SetAnchor(BOTTOMLEFT, ctrl, BOTTOMRIGHT, 0, 0)
   buttons:SetHidden(true)
