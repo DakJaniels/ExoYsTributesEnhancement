@@ -200,7 +200,7 @@ end
 local function CreateLabel(name, parent, offsetX, offsetY)
   local label = ETE.WM:CreateControl( name, parent, CT_LABEL )
   label:ClearAnchors()
-  label:SetAnchor( TOPLEFT, ctrl, TOPLEFT, offsetX or 0, offsetY or 0 )
+  label:SetAnchor( TOPLEFT, label.ctrl, TOPLEFT, offsetX or 0, offsetY or 0 )
   label:SetColor(1,1,1,1)
   label:SetFont( Lib.GetFont() )
   return label
