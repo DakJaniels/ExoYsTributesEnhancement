@@ -229,18 +229,38 @@ end
 
 
 function ETE.UpdateStatsGui()
+  -- First update the character overview section
   local store = ETE.store.statistics
   local counter = 0
-  for charId, charStats in pairs( store.character ) do
+  for charId, charStats in pairs(store.character) do
     local gui = ETE.statsGui[charId] or AddEntry(charId)
-    gui.name:SetText( charStats.name )
-    for matchType, data in pairs( charStats.games ) do
-      gui[matchType]:SetText( zo_strformat("<<1>>/<<2>>", data.won, data.played) )
+    gui.name:SetText(charStats.name)
+    for matchType, data in pairs(charStats.games) do
+      gui[matchType]:SetText(zo_strformat("<<1>>/<<2>>", data.won, data.played))
     end
     gui.ctrl:ClearAnchors()
     gui.ctrl:SetAnchor(TOPLEFT, ETE.statsGui.win, TOPLEFT, 0, counter*30)
-
     counter = counter + 1
+  end
+
+  -- Then update the detailed stats for current character
+  if not ETE.store.statistics.character[ETE.player.charId] then return end
+  for position, matchType in ipairs(ETE.GetMatchTypeOrder()) do
+    local charStore = ETE.store.statistics.character[ETE.player.charId].games[matchType]
+    local labels = StatsGui.charOverview[matchType]
+    
+    local numLoss = charStore.played - charStore.won
+    labels["num"]:SetText(zo_strformat("W: <<1>> / L: <<2>>", charStore.won, numLoss))
+
+    if charStore.played == 0 then
+      labels["perc"]:SetText("Win Rate Time: -")
+      labels["average"]:SetText("Average Time: -")
+      labels["time"]:SetText("Total Time: -")
+    else
+      labels["perc"]:SetText(zo_strformat("Win rate: <<1>>%", charStore.won/charStore.played*100))
+      labels["average"]:SetText(zo_strformat("Average Time: <<1>>", Lib.GetFormattedDuration(charStore.time/charStore.played, "compact")))
+      labels["time"]:SetText(zo_strformat("Total Time: <<1>>", Lib.GetFormattedDuration(charStore.time, "acronym")))
+    end
   end
 end
 
@@ -311,30 +331,8 @@ local labelList = {
   ["num"] = 50,
   ["perc"] = 75,
   ["average"] = 125,
-  ["time"] = 150}
-
-function ETE.UpdateStatsGui()
-  if not ETE.store.statistics.character[ETE.player.charId] then return end
-  for position, matchType in ipairs( ETE.GetMatchTypeOrder() ) do
-    local store = ETE.store.statistics.character[ETE.player.charId].games[matchType]
-    local labels = StatsGui.charOverview[matchType]
-
-    local numLoss = store.played - store.won
-
-    labels["num"]:SetText( zo_strformat("W: <<1>> / L: <<2>>", store.won, numLoss) )
-
-    if store.played == 0 then
-      labels["perc"]:SetText( "Win Rate Time: -" )
-      labels["average"]:SetText( "Average Time: -" )
-      labels["time"]:SetText( "Total Time: -" )
-    else
-      labels["perc"]:SetText( zo_strformat("Win rate: <<1>>%", store.won/store.played*100))
-      labels["average"]:SetText( zo_strformat("Average Time: <<1>>", Lib.GetFormattedDuration(store.time/store.played, "compact") ) )
-      labels["time"]:SetText( zo_strformat("Total Time: <<1>>", Lib.GetFormattedDuration(store.time, "acronym") ) )
-    end
-  end
-
-end
+  ["time"] = 150
+}
 
 function ETE.InitializeStatsGui()
   if StatsGui.initialized then return end
