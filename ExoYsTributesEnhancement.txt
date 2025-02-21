@@ -5,7 +5,7 @@
 ## Version: 1.5.1
 ## SavedVariables: ETESV
 
-## DependsOn: LibExoYsUtilities
+## DependsOn: LibExoYsUtilities>=8
 ## DependsOn: LibAddonMenu-2.0>=37
 
 languages/en.lua
